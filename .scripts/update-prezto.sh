@@ -7,7 +7,7 @@ _update_prezto() {
   echo -n "$ver" > "$_rootdir/prezto/VERSION"
 
   git clone --recursive https://github.com/sorin-ionescu/prezto.git ".zprezto"
-  tar --no-xattrs -cvzf "prezto/prezto-$ver.tgz" ".zprezto"
+  COPYFILE_DISABLE=1 tar --no-xattrs -cvzf "prezto/prezto-$ver.tgz" ".zprezto"
 
   rm -rf ".zprezto"
 }
