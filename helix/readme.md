@@ -1,7 +1,7 @@
 ### download
 
 ```sh
-helixver="25.01.1"
+helixver="25.07.1"
 curl -sL "artas90.github.io/pkgs/helix/helix-${helixver}-$(uname -m).tgz" | tar xz -C /opt && \
 chmod 755 /opt/helix/hx && \
 ln -sfv /opt/helix/hx /usr/bin/hx
@@ -17,8 +17,8 @@ ln -sfv /opt/helix/hx /usr/bin/hx
 # podman run --rm --arch x86_64 -v `pwd`:/app -it ubuntu:20.04
 # podman run --rm --arch aarch64 -v `pwd`:/app -it ubuntu:20.04
 
-VERSION="25.01.1"
-RUSTVER="1.76" # from rust-version at helix-editor/Cargo.toml
+VERSION="25.07.1"
+RUSTVER="1.82" # from rust-version at helix-editor/Cargo.toml
 
 # -- prepare -- -- --
 
@@ -43,6 +43,13 @@ cd helix && git checkout $VERSION
 
 cargo install --target=$rustarch --path helix-term --locked
 
+# -- optional fix of grammar -- -- --
+# cd runtime/grammars/sources
+# git clone https://git.sr.ht/~ecs/tree-sitter-hare
+# cd hare && git pull
+# git checkout __failed_commit__
+# cd /tmp/app/helix
+
 # -- copy files -- -- --
 
 cd $pkgroot && \
@@ -53,6 +60,6 @@ rm -rf opt/helix/runtime/grammars/sources && \
 cp -r ../helix/contrib opt/helix
 
 cd $pkgroot/opt && \
-COPYFILE_DISABLE=1 tar --no-xattrs -cvzf "/tmp/app/$pkgname.tgz" helix
-# cp "/tmp/app/$pkgname.tgz" "/app/$pkgname.tgz"
+COPYFILE_DISABLE=1 tar --no-xattrs -cvzf "/tmp/app/$pkgname.tgz" helix && \
+cp "/tmp/app/$pkgname.tgz" "/app/$pkgname.tgz"
 ```
