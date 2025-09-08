@@ -17,8 +17,11 @@ ln -sfv /opt/helix/hx /usr/bin/hx
 # podman run --rm --arch x86_64 -v `pwd`:/app -it ubuntu:20.04
 # podman run --rm --arch aarch64 -v `pwd`:/app -it ubuntu:20.04
 
+# -- EITHER stable or latest -- -- --
+
 VERSION="25.07.1"
-RUSTVER="1.82" # from rust-version at helix-editor/Cargo.toml
+# --
+VERSION=`date +"%Y.%-m.%-d"`
 
 # -- prepare -- -- --
 
@@ -33,14 +36,20 @@ cd /tmp/app
 
 apt update && apt install -y build-essential curl git && \
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --default-toolchain none -y && \
-source "$HOME/.cargo/env" && \
-rustup toolchain install $RUSTVER --profile minimal
+source "$HOME/.cargo/env"
 
-# -- build app -- -- --
+# -- EITHER stable or latest -- -- --
 
 git clone https://github.com/helix-editor/helix --single-branch --branch=$VERSION --depth=1 && \
 cd helix && git checkout $VERSION
+# --
+git clone https://github.com/helix-editor/helix && \
+cd helix
 
+# -- build app -- -- --
+
+rustver=`cat Cargo.toml | grep rust-version | cut -d '"' -f 2`
+rustup toolchain install $rustver --profile minimal
 cargo install --target=$rustarch --path helix-term --locked
 
 # -- optional fix of grammar -- -- --
